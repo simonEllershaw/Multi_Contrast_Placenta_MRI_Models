@@ -25,6 +25,18 @@ M_pre_eclampsia_placenta_uterine_wall = double(niftiread(fileName_pre_eclampsia_
 
 % Load MRI acquisition parameters
 grad_echo = importdata(fileName_grad_echo); 
+bvals = grad_echo(:, 4);
+TE = grad_echo(:, 5);
+
+% Calc regions of interest (ROI)
+% Must be a better way to do this...
+num_scans = length(grad_echo);
+ROI_healthy_placenta_uterine_wall = zeros(size(V_healthy_original));
+ROI_pre_eclampsia_placenta_uterine_wall = zeros(size(V_pre_eclampsia));
+for i = 1:num_scans
+    ROI_healthy_placenta_uterine_wall(:,:,:,i) = V_healthy_original(:,:,:,i).*M_healthy_placenta_uterine_wall;
+    ROI_pre_eclampsia_placenta_uterine_wall(:,:,:,i) = V_pre_eclampsia(:,:,:,i).*M_pre_eclampsia_placenta_uterine_wall;
+end
 
 
 

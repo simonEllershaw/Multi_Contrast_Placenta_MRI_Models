@@ -1,6 +1,6 @@
 classdef Plotter
     methods(Static)
-        function compare_models(param_maps, V_h_slice, V_pe_slice, model_labels)
+        function compare_models(param_maps, V_h_slice, V_pe_slice, param_label, map_labels)
             % Extract size of map and setup plot
             num_maps = size(param_maps, 1);
             num_models = size(param_maps, 2);
@@ -22,31 +22,32 @@ classdef Plotter
                 % Plot combined rgb map
                 map_model_1 = flipud(squeeze(param_maps(map_num,1,:,:))');
                 map_model_2 = flipud(squeeze(param_maps(map_num,2,:,:))');
+                map_model_3 = flipud(squeeze(param_maps(map_num,3,:,:))');
                 map_combine = slice_rgb;
                 for i=1:size(map_model_1,1)
                     for j=1:size(map_model_1,2)
-                        if map_model_2(i,j) < map_model_1(i,j)
+                        if map_model_1(i,j) < map_model_2(i,j) && map_model_1(i,j) < map_model_3(i,j)
                             map_combine(i,j,:) = [1,0,0];
-                        elseif map_model_1(i,j) < map_model_2(i,j)
+                        elseif map_model_2(i,j) < map_model_3(i,j)
+                            map_combine(i,j,:) = [0,1,0];
+                        elseif map_model_3(i,j) ~= 0
                             map_combine(i,j,:) = [0,0,1];
                         end
                     end
                 end
                 
+                
+                
                 nexttile;
+                % Crop to ROI
+                map_combine = imcrop(map_combine,[0 50 100 110]);
+                
                 imshow(map_combine)
-%                 if map_num == num_maps
-%                     colormap(hot);
-%                     caxis([param_min, param_max]);
-%                     cb = colorbar;
-%                     cb.Label.String = param_units(param_num);
-%                 end
-%                 if param_num == 1
-%                     title(map_labels(map_num));
-%                 end
-%                 if map_num == 1
-%                     ylabel(param_labels(param_num), 'Rotation',0);
-%                 end
+                
+                if map_num == 1
+                    ylabel(param_label, 'Rotation',0);
+                end
+                title(map_labels(map_num))
             end
         end
             
@@ -110,7 +111,7 @@ classdef Plotter
         function [param_min, param_max] = thresholdParameters(param_map)
             param_map_sorted = sort(param_map(:));
             % Set upper bound as nth highest value to handle outliers
-            param_map_no_outliers = param_map_sorted(1:end-100);
+            param_map_no_outliers = param_map_sorted(1:end-250);
             param_min = min(param_map_no_outliers(param_map_no_outliers~=0));
             param_max = param_map_no_outliers(end);
         end

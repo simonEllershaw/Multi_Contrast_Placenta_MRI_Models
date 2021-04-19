@@ -17,7 +17,7 @@ classdef T2ADCModel
             S0_constr = sqrt(params(1));           
             % Constrain [0, 1]
             T2_star_constr = asin(sqrt(params(2)));
-            D_constr = asin(sqrt(params(3)));
+            D_constr = asin(sqrt(params(3)/10));
             params_constr = [S0_constr T2_star_constr D_constr];
         end
 
@@ -26,7 +26,7 @@ classdef T2ADCModel
             S0 = params_constr(1)^2;
             % Invert 0<param<1 constr
             T2_star = sin(params_constr(2))^2;
-            D = sin(params_constr(3))^2;
+            D = 10*sin(params_constr(3))^2;
             params = [S0 T2_star D];
         end
     end

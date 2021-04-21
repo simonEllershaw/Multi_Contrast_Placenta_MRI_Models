@@ -21,10 +21,10 @@ classdef ThreeCompModel
             T2_star_constr = asin(sqrt(params(2)));
             f_star_constr = asin(sqrt(params(4)));
             v_star_constr = asin(sqrt(params(6)));
-            % Contrain x>>y
-            D_1_constr = asin(sqrt(params(3)/0.01));
-            D_2_constr = asin(sqrt((params(5)-params(3))));
-            D_3_constr = asin(sqrt((params(7)-params(5))/10));
+            % Contrain D ordering
+            D_3_constr = asin(sqrt(params(7)/0.01));
+            D_2_constr = asin(sqrt((params(5)-params(7))));
+            D_1_constr = asin(sqrt((params(3)-params(5))/10));
             params_constr = [S0_constr T2_star_constr D_1_constr f_star_constr D_2_constr v_star_constr D_3_constr];
         end
 
@@ -35,10 +35,10 @@ classdef ThreeCompModel
             T2_star = sin(params_constr(2))^2;
             f = sin(params_constr(4))^2;
             v = sin(params_constr(6))^2;
-            % Invert 0<D1<0.01, D1<D2<1+D1, D2<D3<10+D2
-            D_1 = 0.01*sin(params_constr(3))^2;
-            D_2 = 1*sin(params_constr(5))^2 + D_1;
-            D_3 = 10*sin(params_constr(7))^2 + D_2;
+            % Invert 0<D3<0.01, D3<D2<1+D3, D2<D1<10+D2
+            D_3 = 0.01*sin(params_constr(3))^2;
+            D_2 = 1*sin(params_constr(5))^2 + D_3;
+            D_1 = 10*sin(params_constr(7))^2 + D_2;
             params = [S0 T2_star D_1 f D_2 v D_3];
         end
     end

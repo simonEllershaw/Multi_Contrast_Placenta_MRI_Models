@@ -17,7 +17,7 @@ classdef IVIMModel
             S0_constr = sqrt(params(1));           
             % Constrain [0, 1]
             T2_star_constr = asin(sqrt(params(2)));
-            D_1_constr = asin(sqrt(params(3)));
+            D_1_constr = asin(sqrt(params(3)))/10;
             f_contr = asin(sqrt(params(4)));
             D_2_constr = asin(sqrt((params(5))/params(3))); 
             params_constr = [S0_constr T2_star_constr D_1_constr f_contr D_2_constr];
@@ -28,7 +28,7 @@ classdef IVIMModel
             S0 = params_constr(1)^2;
             % Invert 0<param<1 constr
             T2_star = sin(params_constr(2))^2;
-            D_1 = sin(params_constr(3))^2;
+            D_1 = 10*sin(params_constr(3))^2;
             f = sin(params_constr(4))^2;
             D_2 = D_1*sin(params_constr(5))^2;
             params = [S0 T2_star D_1 f D_2];

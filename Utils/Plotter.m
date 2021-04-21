@@ -111,7 +111,7 @@ classdef Plotter
         function [param_min, param_max] = thresholdParameters(param_map)
             param_map_sorted = sort(param_map(:));
             % Set upper bound as nth highest value to handle outliers
-            param_map_no_outliers = param_map_sorted(1:end-250);
+            param_map_no_outliers = param_map_sorted(1:end-10);
             param_min = min(param_map_no_outliers(param_map_no_outliers~=0));
             param_max = param_map_no_outliers(end);
         end
@@ -134,6 +134,33 @@ classdef Plotter
                 title(param_labels(param_num))
                 ylabel('Values (' + param_units(param_num) + ')'); 
             end    
+        end
+        
+        function histogram_param_maps(param_maps, param_labels, map_labels)
+            num_maps = size(param_maps, 1);
+            num_params = size(param_maps, 2);
+            
+            for param_num=1:num_params
+                [param_min, param_max] = Plotter.thresholdParameters(param_maps(:,param_num,:,:));
+                subplot(1,num_params,param_num);
+                hold on;
+                for map_num=1:num_maps
+                    map = param_maps(map_num, param_num,:,:);
+                    map = map(map~=0);
+                    h = histogram(map, 15, 'BinLimits', [param_min, param_max]);
+                end
+                xlabel(param_labels(param_num));
+                ylabel("Frequency"); 
+                hold off;                 
+            end
+            legend(map_labels); 
+        end
+        
+        function visualise_slice(slice, mask, title_string)
+            slice_rgb = double2rgb(slice, gray, []);
+            slice_rgb(:,:,1) = slice_rgb(:,:,1) + 0.2*mask;
+            imshow(flipud(squeeze(slice_rgb)), []);
+            title(title_string);
         end
     end
 end
